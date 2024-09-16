@@ -1,20 +1,18 @@
 (function() {
     window.initImageSlider = function(imageUrls, options) {
-        const { slideSpeed = 0.5, autoPlayInterval = 3000 } = options;
+        const { slideSpeed = 0.5, autoPlayInterval = 3000, transitionEffect = 'fade' } = options;
 
-        // Create and style the slider container
         const sliderContainer = document.createElement('div');
         sliderContainer.id = 'image-slider';
         sliderContainer.style.position = 'relative';
         sliderContainer.style.maxWidth = '80%';
         sliderContainer.style.margin = 'auto';
         sliderContainer.style.overflow = 'hidden';
-        sliderContainer.style.border = '2px solid #00bfff'; // Border around the slider
-        sliderContainer.style.borderRadius = '10px'; // Rounded corners
-        sliderContainer.style.boxShadow = '0 4px 8px rgba(0,0,0,0.3)'; // Shadow effect
+        sliderContainer.style.border = '2px solid #00bfff';
+        sliderContainer.style.borderRadius = '10px';
+        sliderContainer.style.boxShadow = '0 4px 8px rgba(0,0,0,0.3)';
         document.getElementById('image-slider-container').appendChild(sliderContainer);
 
-        // Create and style the slides container
         const slidesContainer = document.createElement('div');
         slidesContainer.className = 'slides-container';
         slidesContainer.style.display = 'flex';
@@ -23,7 +21,6 @@
         slidesContainer.style.position = 'relative';
         sliderContainer.appendChild(slidesContainer);
 
-        // Dynamically create and add slides
         imageUrls.forEach((imageUrl) => {
             const slide = document.createElement('div');
             slide.className = 'slide';
@@ -31,20 +28,18 @@
             slide.style.boxSizing = 'border-box';
             slide.style.position = 'relative';
             slide.style.overflow = 'hidden';
-            slide.style.opacity = '0';
             slide.style.transition = `opacity ${slideSpeed}s ease-in-out`;
 
             const img = document.createElement('img');
             img.src = imageUrl;
             img.style.width = '100%';
             img.style.verticalAlign = 'middle';
-            img.style.borderRadius = '10px'; // Rounded corners for images
+            img.style.borderRadius = '10px';
 
             slide.appendChild(img);
             slidesContainer.appendChild(slide);
         });
 
-        // Create and style the navigation buttons
         const prevButton = document.createElement('button');
         prevButton.className = 'slider-button prev-button';
         prevButton.textContent = '‹';
@@ -57,8 +52,9 @@
         prevButton.style.padding = '10px';
         prevButton.style.cursor = 'pointer';
         prevButton.style.transform = 'translateY(-50%)';
-        prevButton.style.borderRadius = '5px';
-        prevButton.style.fontSize = '18px';
+        prevButton.style.borderRadius = '50%';
+        prevButton.style.fontSize = '24px';
+        prevButton.style.transition = 'background-color 0.3s';
         sliderContainer.appendChild(prevButton);
 
         const nextButton = document.createElement('button');
@@ -73,11 +69,11 @@
         nextButton.style.padding = '10px';
         nextButton.style.cursor = 'pointer';
         nextButton.style.transform = 'translateY(-50%)';
-        nextButton.style.borderRadius = '5px';
-        nextButton.style.fontSize = '18px';
+        nextButton.style.borderRadius = '50%';
+        nextButton.style.fontSize = '24px';
+        nextButton.style.transition = 'background-color 0.3s';
         sliderContainer.appendChild(nextButton);
 
-        // Create and style pagination indicators
         const pagination = document.createElement('div');
         pagination.className = 'pagination';
         pagination.style.position = 'absolute';
@@ -85,29 +81,26 @@
         pagination.style.left = '50%';
         pagination.style.transform = 'translateX(-50%)';
         pagination.style.display = 'flex';
-        pagination.style.gap = '5px';
+        pagination.style.gap = '8px';
         sliderContainer.appendChild(pagination);
 
         imageUrls.forEach((_, i) => {
             const indicator = document.createElement('span');
             indicator.className = 'pagination-indicator';
-            indicator.style.width = '10px';
-            indicator.style.height = '10px';
+            indicator.style.width = '12px';
+            indicator.style.height = '12px';
             indicator.style.borderRadius = '50%';
             indicator.style.backgroundColor = '#ddd';
             indicator.style.cursor = 'pointer';
+            indicator.style.transition = 'background-color 0.3s';
             pagination.appendChild(indicator);
         });
 
         const indicators = document.querySelectorAll('.pagination-indicator');
 
-        // Slider logic
-        let index = 0;
-        const slideCount = imageUrls.length;
-
         function showSlide(n) {
-            if (n >= slideCount) index = 0;
-            else if (n < 0) index = slideCount - 1;
+            if (n >= imageUrls.length) index = 0;
+            else if (n < 0) index = imageUrls.length - 1;
             else index = n;
 
             slidesContainer.style.transform = `translateX(-${index * 100}%)`;
@@ -136,13 +129,15 @@
             }
         });
 
-        // Optional: Auto-slide
         let autoPlayIntervalId = setInterval(function() {
             showSlide(index + 1);
         }, autoPlayInterval);
 
-        // Touch support
-        let startX, endX;
+        const stopAutoPlay = () => clearInterval(autoPlayIntervalId);
+        prevButton.addEventListener('click', stopAutoPlay);
+        nextButton.addEventListener('click', stopAutoPlay);
+        pagination.addEventListener('click', stopAutoPlay);
+
         sliderContainer.addEventListener('touchstart', function(e) {
             startX = e.touches[0].clientX;
         });
@@ -156,10 +151,7 @@
             }
         });
 
-        // Stop auto-play on manual interaction
-        const stopAutoPlay = () => clearInterval(autoPlayIntervalId);
-        prevButton.addEventListener('click', stopAutoPlay);
-        nextButton.addEventListener('click', stopAutoPlay);
-        pagination.addEventListener('click', stopAutoPlay);
+        // Initial slide
+        showSlide(index);
     };
 })();
