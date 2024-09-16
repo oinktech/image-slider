@@ -1,6 +1,6 @@
 (function() {
     window.initImageSlider = function(imageUrls, options) {
-        const { slideSpeed = 0.5, autoPlayInterval = 3000, transitionEffect = 'fade' } = options;
+        const { slideSpeed = 0.8, autoPlayInterval = 4000, transitionEffect = 'slide' } = options;
 
         const sliderContainer = document.createElement('div');
         sliderContainer.id = 'image-slider';
@@ -8,7 +8,6 @@
         sliderContainer.style.maxWidth = '80%';
         sliderContainer.style.margin = 'auto';
         sliderContainer.style.overflow = 'hidden';
-        sliderContainer.style.border = '2px solid #00bfff';
         sliderContainer.style.borderRadius = '10px';
         sliderContainer.style.boxShadow = '0 4px 8px rgba(0,0,0,0.3)';
         sliderContainer.style.backgroundColor = '#fff'; // Background color for container
@@ -17,12 +16,13 @@
         const slidesContainer = document.createElement('div');
         slidesContainer.className = 'slides-container';
         slidesContainer.style.display = 'flex';
-        slidesContainer.style.transition = `transform ${slideSpeed}s ease-in-out, opacity ${slideSpeed}s ease-in-out`;
+        slidesContainer.style.transition = `transform ${slideSpeed}s ease-in-out`;
         slidesContainer.style.width = '100%';
+        slidesContainer.style.height = 'auto';
         slidesContainer.style.position = 'relative';
         sliderContainer.appendChild(slidesContainer);
 
-        imageUrls.forEach((imageUrl) => {
+        imageUrls.forEach((imageUrl, index) => {
             const slide = document.createElement('div');
             slide.className = 'slide';
             slide.style.minWidth = '100%';
@@ -33,16 +33,24 @@
             slide.style.display = 'flex';
             slide.style.alignItems = 'center';
             slide.style.justifyContent = 'center';
+            slide.style.height = 'auto';
             slide.style.backgroundColor = '#ddd'; // Background color for slides
 
             const img = document.createElement('img');
             img.src = imageUrl;
-            img.style.maxWidth = '100%';
-            img.style.maxHeight = '100%';
-            img.style.borderRadius = '10px'; // Rounded corners for images
+            img.style.width = '100%';
+            img.style.height = 'auto';
+            img.style.maxHeight = '100%'; // Ensure image does not exceed container height
+            img.style.objectFit = 'contain'; // Ensure images fit without distortion
+            img.style.transition = `opacity ${slideSpeed}s ease-in-out`;
 
             slide.appendChild(img);
             slidesContainer.appendChild(slide);
+
+            // Update container height based on image size
+            img.onload = function() {
+                sliderContainer.style.height = `${img.naturalHeight}px`;
+            };
         });
 
         const prevButton = document.createElement('button');
@@ -61,6 +69,7 @@
         prevButton.style.fontSize = '24px';
         prevButton.style.boxShadow = '0 4px 8px rgba(0,0,0,0.5)';
         prevButton.style.transition = 'background-color 0.3s, transform 0.3s';
+        prevButton.style.zIndex = '1';
         sliderContainer.appendChild(prevButton);
 
         const nextButton = document.createElement('button');
@@ -79,6 +88,7 @@
         nextButton.style.fontSize = '24px';
         nextButton.style.boxShadow = '0 4px 8px rgba(0,0,0,0.5)';
         nextButton.style.transition = 'background-color 0.3s, transform 0.3s';
+        nextButton.style.zIndex = '1';
         sliderContainer.appendChild(nextButton);
 
         const pagination = document.createElement('div');
@@ -89,6 +99,7 @@
         pagination.style.transform = 'translateX(-50%)';
         pagination.style.display = 'flex';
         pagination.style.gap = '8px';
+        pagination.style.zIndex = '1';
         sliderContainer.appendChild(pagination);
 
         imageUrls.forEach((_, i) => {
@@ -99,7 +110,7 @@
             indicator.style.borderRadius = '50%';
             indicator.style.backgroundColor = '#ddd';
             indicator.style.cursor = 'pointer';
-            indicator.style.transition = 'background-color 0.3s';
+            indicator.style.transition = 'background-color 0.3s, transform 0.3s';
             pagination.appendChild(indicator);
         });
 
@@ -118,6 +129,7 @@
 
             indicators.forEach((indicator, i) => {
                 indicator.style.backgroundColor = (i === index) ? '#00bfff' : '#ddd';
+                indicator.style.transform = (i === index) ? 'scale(1.2)' : 'scale(1)';
             });
         }
 
@@ -185,6 +197,4 @@
     };
 
     let index = 0;
-    let startX = 0;
-    let endX = 0;
 })();
