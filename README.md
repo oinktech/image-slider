@@ -109,11 +109,11 @@ For technical support, please visit our [GitHub Issues Page](https://github.com/
 
 ### Contributing
 
-We welcome contributions to improve this plugin. Please refer to our [Contributing Guide](https://github.com/oinktech/image-slider/CONTRIBUTING.md) for more details.
+We welcome contributions to improve this plugin. Please refer to our [Contributing Guide](https://oinktech.github.io/image-slider/CONTRIBUTING.md) for more details.
 
 ### License
 
-This plugin is licensed under the MIT License. See the [LICENSE](https://github.com/oinktech/image-slider/LICENSE) file for more details.
+This plugin is licensed under the MIT License. See the [LICENSE](https://oinktech.github.io/image-slider/LICENSE) file for more details.
 
 ---
 
@@ -219,8 +219,8 @@ Image Slider 插件使您可以輕鬆地將圖片滑塊整合到您的網頁中�
 
 ### 貢獻
 
-我們歡迎您對此插件進行貢獻。詳細信息請參見我們的 [貢獻指南](https://github.com/oinktech/image-slider/CONTRIBUTING.md)。
+我們歡迎您對此插件進行貢獻。詳細信息請參見我們的 [貢獻指南](https://oinktech.github.io/image-slider/CONTRIBUTING.md)。
 
 ### 授權
 
-此插件根據 MIT 授權條款授權。更多詳情請參閱 [LICENSE](https://github.com/oinktech/image-slider/LICENSE) 文件。
+此插件根據 MIT 授權條款授權。更多詳情請參閱 [LICENSE](https://oinktech.github.io/image-slider/LICENSE) 文件。
