@@ -10,13 +10,17 @@
             return;
         }
 
-        // Create and style the slider container
+        // Ensure the slider container is positioned correctly for z-index
+        sliderContainer.style.position = 'relative';
+
+        // Create and style the slides container
         const slidesContainer = document.createElement('div');
         slidesContainer.className = 'slides-container';
         slidesContainer.style.display = 'flex';
         slidesContainer.style.transition = `transform ${slideSpeed}s ease-in-out`;
         slidesContainer.style.width = '100%';
         slidesContainer.style.position = 'relative';
+        slidesContainer.style.zIndex = '1'; // Ensure slides are above the background
         sliderContainer.appendChild(slidesContainer);
 
         function createSlide(imageUrl) {
@@ -27,6 +31,7 @@
             slide.style.position = 'relative';
             slide.style.overflow = 'hidden';
             slide.style.transition = `opacity ${slideSpeed}s ease-in-out`;
+            slide.style.zIndex = '1'; // Ensure slides are above the background
 
             const img = document.createElement('img');
             img.src = imageUrl;
@@ -63,6 +68,7 @@
         prevButton.style.transform = 'translateY(-50%)';
         prevButton.style.borderRadius = '50%';
         prevButton.style.fontSize = '24px';
+        prevButton.style.zIndex = '2'; // Ensure buttons are above the slides
         prevButton.style.transition = 'background-color 0.3s, transform 0.3s';
         sliderContainer.appendChild(prevButton);
 
@@ -80,6 +86,7 @@
         nextButton.style.transform = 'translateY(-50%)';
         nextButton.style.borderRadius = '50%';
         nextButton.style.fontSize = '24px';
+        nextButton.style.zIndex = '2'; // Ensure buttons are above the slides
         nextButton.style.transition = 'background-color 0.3s, transform 0.3s';
         sliderContainer.appendChild(nextButton);
 
@@ -91,6 +98,7 @@
         pagination.style.transform = 'translateX(-50%)';
         pagination.style.display = 'flex';
         pagination.style.gap = '8px';
+        pagination.style.zIndex = '2'; // Ensure pagination is above the slides
         sliderContainer.appendChild(pagination);
 
         function createPaginationIndicator() {
