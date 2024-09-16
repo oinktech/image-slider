@@ -1,16 +1,19 @@
 (function() {
     window.initImageSlider = function(imageUrls, options) {
-        const { slideSpeed = 0.8, autoPlayInterval = 4000, transitionEffect = 'slide' } = options;
+        const { slideSpeed = 0.5, autoPlayInterval = 3000, transitionEffect = 'fade' } = options;
+        let imagesLoaded = 0;
 
+        // Create and style the slider container
         const sliderContainer = document.createElement('div');
         sliderContainer.id = 'image-slider';
         sliderContainer.style.position = 'relative';
         sliderContainer.style.maxWidth = '80%';
         sliderContainer.style.margin = 'auto';
         sliderContainer.style.overflow = 'hidden';
+        sliderContainer.style.border = '2px solid #00bfff';
         sliderContainer.style.borderRadius = '10px';
-        sliderContainer.style.boxShadow = '0 4px 8px rgba(0,0,0,0.3)';
-        sliderContainer.style.backgroundColor = '#fff'; // Background color for container
+        sliderContainer.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.4)';
+        sliderContainer.style.backgroundColor = '#ffffff'; // Background color
         document.getElementById('image-slider-container').appendChild(sliderContainer);
 
         const slidesContainer = document.createElement('div');
@@ -18,11 +21,12 @@
         slidesContainer.style.display = 'flex';
         slidesContainer.style.transition = `transform ${slideSpeed}s ease-in-out`;
         slidesContainer.style.width = '100%';
-        slidesContainer.style.height = 'auto';
         slidesContainer.style.position = 'relative';
         sliderContainer.appendChild(slidesContainer);
 
-        imageUrls.forEach((imageUrl, index) => {
+        let index = 0;
+
+        function createSlide(imageUrl) {
             const slide = document.createElement('div');
             slide.className = 'slide';
             slide.style.minWidth = '100%';
@@ -30,28 +34,27 @@
             slide.style.position = 'relative';
             slide.style.overflow = 'hidden';
             slide.style.transition = `opacity ${slideSpeed}s ease-in-out`;
-            slide.style.display = 'flex';
-            slide.style.alignItems = 'center';
-            slide.style.justifyContent = 'center';
-            slide.style.height = 'auto';
-            slide.style.backgroundColor = '#ddd'; // Background color for slides
 
             const img = document.createElement('img');
             img.src = imageUrl;
             img.style.width = '100%';
-            img.style.height = 'auto';
-            img.style.maxHeight = '100%'; // Ensure image does not exceed container height
-            img.style.objectFit = 'contain'; // Ensure images fit without distortion
-            img.style.transition = `opacity ${slideSpeed}s ease-in-out`;
+            img.style.verticalAlign = 'middle';
+            img.style.borderRadius = '10px';
+            img.style.objectFit = 'cover'; // Cover the slide area
+
+            img.onload = function() {
+                imagesLoaded++;
+                if (imagesLoaded === imageUrls.length) {
+                    showSlide(index);
+                    autoPlay();
+                }
+            };
 
             slide.appendChild(img);
             slidesContainer.appendChild(slide);
+        }
 
-            // Update container height based on image size
-            img.onload = function() {
-                sliderContainer.style.height = `${img.naturalHeight}px`;
-            };
-        });
+        imageUrls.forEach(createSlide);
 
         const prevButton = document.createElement('button');
         prevButton.className = 'slider-button prev-button';
@@ -62,14 +65,12 @@
         prevButton.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
         prevButton.style.color = 'white';
         prevButton.style.border = 'none';
-        prevButton.style.padding = '12px';
+        prevButton.style.padding = '10px';
         prevButton.style.cursor = 'pointer';
         prevButton.style.transform = 'translateY(-50%)';
         prevButton.style.borderRadius = '50%';
         prevButton.style.fontSize = '24px';
-        prevButton.style.boxShadow = '0 4px 8px rgba(0,0,0,0.5)';
         prevButton.style.transition = 'background-color 0.3s, transform 0.3s';
-        prevButton.style.zIndex = '1';
         sliderContainer.appendChild(prevButton);
 
         const nextButton = document.createElement('button');
@@ -81,14 +82,12 @@
         nextButton.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
         nextButton.style.color = 'white';
         nextButton.style.border = 'none';
-        nextButton.style.padding = '12px';
+        nextButton.style.padding = '10px';
         nextButton.style.cursor = 'pointer';
         nextButton.style.transform = 'translateY(-50%)';
         nextButton.style.borderRadius = '50%';
         nextButton.style.fontSize = '24px';
-        nextButton.style.boxShadow = '0 4px 8px rgba(0,0,0,0.5)';
         nextButton.style.transition = 'background-color 0.3s, transform 0.3s';
-        nextButton.style.zIndex = '1';
         sliderContainer.appendChild(nextButton);
 
         const pagination = document.createElement('div');
@@ -99,10 +98,9 @@
         pagination.style.transform = 'translateX(-50%)';
         pagination.style.display = 'flex';
         pagination.style.gap = '8px';
-        pagination.style.zIndex = '1';
         sliderContainer.appendChild(pagination);
 
-        imageUrls.forEach((_, i) => {
+        function createPaginationIndicator() {
             const indicator = document.createElement('span');
             indicator.className = 'pagination-indicator';
             indicator.style.width = '12px';
@@ -110,10 +108,11 @@
             indicator.style.borderRadius = '50%';
             indicator.style.backgroundColor = '#ddd';
             indicator.style.cursor = 'pointer';
-            indicator.style.transition = 'background-color 0.3s, transform 0.3s';
+            indicator.style.transition = 'background-color 0.3s';
             pagination.appendChild(indicator);
-        });
+        }
 
+        imageUrls.forEach(createPaginationIndicator);
         const indicators = document.querySelectorAll('.pagination-indicator');
 
         function showSlide(n) {
@@ -129,7 +128,6 @@
 
             indicators.forEach((indicator, i) => {
                 indicator.style.backgroundColor = (i === index) ? '#00bfff' : '#ddd';
-                indicator.style.transform = (i === index) ? 'scale(1.2)' : 'scale(1)';
             });
         }
 
@@ -148,53 +146,33 @@
             }
         });
 
-        let autoPlayIntervalId = setInterval(function() {
-            showSlide(index + 1);
-        }, autoPlayInterval);
+        let autoPlayIntervalId;
+
+        function autoPlay() {
+            autoPlayIntervalId = setInterval(function() {
+                showSlide(index + 1);
+            }, autoPlayInterval);
+        }
 
         const stopAutoPlay = () => clearInterval(autoPlayIntervalId);
         prevButton.addEventListener('click', stopAutoPlay);
         nextButton.addEventListener('click', stopAutoPlay);
         pagination.addEventListener('click', stopAutoPlay);
 
-        // Pause/Play Button
-        const playPauseButton = document.createElement('button');
-        playPauseButton.className = 'play-pause-button';
-        playPauseButton.textContent = '❚❚'; // Pause icon
-        playPauseButton.style.position = 'absolute';
-        playPauseButton.style.bottom = '10px';
-        playPauseButton.style.right = '50px';
-        playPauseButton.style.backgroundColor = '#00bfff';
-        playPauseButton.style.color = 'white';
-        playPauseButton.style.border = 'none';
-        playPauseButton.style.padding = '10px';
-        playPauseButton.style.cursor = 'pointer';
-        playPauseButton.style.borderRadius = '50%';
-        playPauseButton.style.fontSize = '24px';
-        playPauseButton.style.boxShadow = '0 4px 8px rgba(0,0,0,0.5)';
-        playPauseButton.style.transition = 'background-color 0.3s, transform 0.3s';
-        sliderContainer.appendChild(playPauseButton);
+        sliderContainer.addEventListener('touchstart', function(e) {
+            startX = e.touches[0].clientX;
+        });
 
-        let isPlaying = true;
-
-        function togglePlayPause() {
-            if (isPlaying) {
-                clearInterval(autoPlayIntervalId);
-                playPauseButton.textContent = '►'; // Play icon
-            } else {
-                autoPlayIntervalId = setInterval(function() {
-                    showSlide(index + 1);
-                }, autoPlayInterval);
-                playPauseButton.textContent = '❚❚'; // Pause icon
+        sliderContainer.addEventListener('touchend', function(e) {
+            endX = e.changedTouches[0].clientX;
+            if (startX > endX + 50) {
+                showSlide(index + 1);
+            } else if (startX < endX - 50) {
+                showSlide(index - 1);
             }
-            isPlaying = !isPlaying;
-        }
-
-        playPauseButton.addEventListener('click', togglePlayPause);
+        });
 
         // Initial slide
         showSlide(index);
     };
-
-    let index = 0;
 })();
