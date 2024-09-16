@@ -1,21 +1,16 @@
 (function() {
-    window.initImageSlider = function(imageUrls, options) {
+    window.initImageSlider = function(containerId, imageUrls, options) {
         const { slideSpeed = 0.5, autoPlayInterval = 3000, transitionEffect = 'fade' } = options;
         let imagesLoaded = 0;
+        let index = 0;
+
+        const sliderContainer = document.getElementById(containerId);
+        if (!sliderContainer) {
+            console.error(`No element found with id "${containerId}"`);
+            return;
+        }
 
         // Create and style the slider container
-        const sliderContainer = document.createElement('div');
-        sliderContainer.id = 'image-slider';
-        sliderContainer.style.position = 'relative';
-        sliderContainer.style.maxWidth = '80%';
-        sliderContainer.style.margin = 'auto';
-        sliderContainer.style.overflow = 'hidden';
-        sliderContainer.style.border = '2px solid #00bfff';
-        sliderContainer.style.borderRadius = '10px';
-        sliderContainer.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.4)';
-        sliderContainer.style.backgroundColor = '#ffffff'; // Background color
-        document.getElementById('image-slider-container').appendChild(sliderContainer);
-
         const slidesContainer = document.createElement('div');
         slidesContainer.className = 'slides-container';
         slidesContainer.style.display = 'flex';
@@ -23,8 +18,6 @@
         slidesContainer.style.width = '100%';
         slidesContainer.style.position = 'relative';
         sliderContainer.appendChild(slidesContainer);
-
-        let index = 0;
 
         function createSlide(imageUrl) {
             const slide = document.createElement('div');
@@ -40,7 +33,7 @@
             img.style.width = '100%';
             img.style.verticalAlign = 'middle';
             img.style.borderRadius = '10px';
-            img.style.objectFit = 'cover'; // Cover the slide area
+            img.style.objectFit = 'cover';
 
             img.onload = function() {
                 imagesLoaded++;
@@ -113,7 +106,7 @@
         }
 
         imageUrls.forEach(createPaginationIndicator);
-        const indicators = document.querySelectorAll('.pagination-indicator');
+        const indicators = document.querySelectorAll(`#${containerId} .pagination-indicator`);
 
         function showSlide(n) {
             if (n >= imageUrls.length) index = 0;
